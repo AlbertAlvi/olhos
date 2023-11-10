@@ -13,4 +13,5 @@ body {
 #myCanvas {
     display: block;
     background-color: white;
+    touch-action: none;
 }

@@ -11,14 +11,26 @@ olhoOut.src = "olhoOut2.png";
 let tam = 0;
 let arcRadius = 0;
 
-let mouseX = null;
-let mouseY = null;
-let mouseOutFlag = true;
+let pointerX = null;
+let pointerY = null;
+let pointerOutFlag = true;
 
-window.addEventListener("pointermove", (event) => {
-	mouseOutFlag = false;
-	mouseX = event.x;
-	mouseY = event.y;
+canvas.addEventListener("pointermove", (event) => {
+	disablePointerOut(event);
+});
+
+canvas.addEventListener("pointerdown", (event) => {
+	disablePointerOut(event);
+});
+
+function disablePointerOut(event) {
+	pointerOutFlag = false;
+	pointerX = event.x;
+	pointerY = event.y;
+}
+
+canvas.addEventListener("pointerleave", () => {
+	pointerOutFlag = true;
 });
 
 window.addEventListener("resize", () => {
@@ -28,9 +40,6 @@ window.addEventListener("resize", () => {
 	resizeCanvas(canvas);
 });
 
-canvas.addEventListener("mouseleave", () => {
-	mouseOutFlag = true;
-});
 
 window.onload = () => {
 	resizeCanvas(canvas);
@@ -76,7 +85,7 @@ function animate() {
 	temp_y = canvas.height / 2 - 50;
 
 	ctx.translate(temp_x, temp_y); // move a origem do canvas para o centro dele
-	ctx.rotate(normalizeAngle(temp_x, temp_y, mouseX, mouseY)); // rotaciona o canvas
+	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY)); // rotaciona o canvas
 	desenhar(ctx, olhoImagem, olhoOut, -tam / 2, -tam / 2, tam, tam);
 	// ctx.drawImage(); // faz o centro da imagem ficar alinhado com a (nova) origem do canvas
 
@@ -88,7 +97,7 @@ function animate() {
 	temp_y = canvas.height / 2 - 50;
 
 	ctx.translate(temp_x, temp_y);
-	ctx.rotate(normalizeAngle(temp_x, temp_y, mouseX, mouseY));
+	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY));
 	desenhar(ctx, olhoImagem, olhoOut, -tam / 2, -tam / 2, tam, tam);
 	// ctx.drawImage(olhoImagem, -tam / 2, -tam / 2, tam, tam);
 
@@ -104,7 +113,7 @@ function normalizeAngle(x1, y1, x2, y2) {
 }
 
 function desenhar(ctx, imagem, imagemOut, x, y, w, h) {
-	if (mouseOutFlag) {
+	if (pointerOutFlag) {
 		ctx.drawImage(imagemOut, x, y, w, h);
 	} else {
 		ctx.drawImage(imagem, x, y, w, h);
