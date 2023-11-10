@@ -2,10 +2,14 @@
 
 const canvas = document.querySelector("#myCanvas");
 const ctx = canvas.getContext("2d");
+
 const olhoImagem = new Image();
 olhoImagem.src = "olho.png";
 const olhoOut = new Image();
 olhoOut.src = "olhoOut2.png";
+
+let tam = 0;
+let arcRadius = 0;
 
 let mouseX = null;
 let mouseY = null;
@@ -15,6 +19,12 @@ window.addEventListener("mousemove", (event) => {
 	mouseOutFlag = false;
 	mouseX = event.x;
 	mouseY = event.y;
+});
+
+window.addEventListener("resize", () => {
+	innerWidth = Math.floor(window.innerWidth - 0.1);
+	innerHeight = Math.floor(window.innerHeight - 0.1);
+	resizeCanvas(canvas);
 });
 
 canvas.addEventListener("mouseleave", () => {
@@ -31,9 +41,20 @@ let innerHeight = Math.floor(window.innerHeight - 0.1);
 function resizeCanvas(canvas) {
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
+	if(matchMedia("(max-width: 600px").matches) {
+		tam = 0.275 * canvas.width;
+		arcRadius = 0.4 * canvas.width;
+	}
+	else if(matchMedia("(max-width: 1024px").matches) {
+		tam = 0.2 * canvas.width;
+		arcRadius = 0.3 * canvas.width;
+	}
+	else {
+		tam = 0.135 * canvas.width;
+		arcRadius = 0.225 * canvas.width;
+	}
 }
 
-const tam = 200;
 function animate() {
 	let temp_x, temp_y;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -43,7 +64,7 @@ function animate() {
 	temp_x = canvas.width / 2;
 	temp_y = canvas.height / 2;
 	ctx.translate(temp_x, temp_y);
-	ctx.arc(0, 0, 300, 0, Math.PI * 2, false); // novo arco na origem (0, 0) após a translação
+	ctx.arc(0, 0, arcRadius, 0, Math.PI * 2, false); // novo arco na origem (0, 0) após a translação
 	ctx.stroke();
 
 	ctx.restore();
