@@ -3,43 +3,44 @@
 const canvas = document.querySelector("#myCanvas");
 const ctx = canvas.getContext("2d");
 
-const olhoImagem = new Image();
-olhoImagem.src = "olho.png";
+const olhoIn = new Image();
+olhoIn.src = "olhoIn.png";
 const olhoOut = new Image();
-olhoOut.src = "olhoOut2.png";
+olhoOut.src = "olhoOut.png";
+
+let olhoEscolhido = olhoOut;
 
 let tam = 0;
 let arcRadius = 0;
 
 let pointerX = null;
 let pointerY = null;
-let pointerOutFlag = true;
 
 canvas.addEventListener("pointermove", (event) => {
-	disablePointerOut(event);
+	movePointerXY(event);
+	olhoEscolhido = olhoIn;
 });
 
 canvas.addEventListener("pointerdown", (event) => {
-	disablePointerOut(event);
+	movePointerXY(event);
+	olhoEscolhido = olhoIn;
 });
 
-function disablePointerOut(event) {
-	pointerOutFlag = false;
+function movePointerXY(event) {
 	pointerX = event.x;
 	pointerY = event.y;
 }
 
 canvas.addEventListener("pointerleave", () => {
-	pointerOutFlag = true;
+	olhoEscolhido = olhoOut;
 });
 
 window.addEventListener("resize", () => {
 	innerWidth = Math.floor(window.innerWidth - 0.1);
 	innerHeight = Math.floor(window.innerHeight - 0.1);
-	console.log('resize ok', innerWidth + 'w', innerHeight + 'h');
+	console.log("resize ok", innerWidth + "w", innerHeight + "h");
 	resizeCanvas(canvas);
 });
-
 
 window.onload = () => {
 	resizeCanvas(canvas);
@@ -51,15 +52,13 @@ let innerHeight = Math.floor(window.innerHeight - 0.1);
 function resizeCanvas(canvas) {
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
-	if(innerWidth <= 600) {
+	if (innerWidth <= 600) {
 		tam = 0.275 * canvas.width;
 		arcRadius = 0.4 * canvas.width;
-	}
-	else if(innerWidth <= 1024) {
+	} else if (innerWidth <= 1024) {
 		tam = 0.2 * canvas.width;
 		arcRadius = 0.3 * canvas.width;
-	}
-	else {
+	} else {
 		tam = 0.135 * canvas.width;
 		arcRadius = 0.225 * canvas.width;
 	}
@@ -86,8 +85,7 @@ function animate() {
 
 	ctx.translate(temp_x, temp_y); // move a origem do canvas para o centro dele
 	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY)); // rotaciona o canvas
-	desenhar(ctx, olhoImagem, olhoOut, -tam / 2, -tam / 2, tam, tam);
-	// ctx.drawImage(); // faz o centro da imagem ficar alinhado com a (nova) origem do canvas
+	ctx.drawImage(olhoEscolhido, -tam / 2, -tam / 2, tam, tam); // faz o centro da imagem ficar alinhado com a (nova) origem do canvas
 
 	ctx.restore();
 	ctx.save(); // extremamente importante
@@ -98,8 +96,7 @@ function animate() {
 
 	ctx.translate(temp_x, temp_y);
 	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY));
-	desenhar(ctx, olhoImagem, olhoOut, -tam / 2, -tam / 2, tam, tam);
-	// ctx.drawImage(olhoImagem, -tam / 2, -tam / 2, tam, tam);
+	ctx.drawImage(olhoEscolhido, -tam / 2, -tam / 2, tam, tam);
 
 	ctx.restore();
 
@@ -110,14 +107,6 @@ function normalizeAngle(x1, y1, x2, y2) {
 	const dx = x2 - x1;
 	const dy = y2 - y1;
 	return Math.atan2(dy, dx);
-}
-
-function desenhar(ctx, imagem, imagemOut, x, y, w, h) {
-	if (pointerOutFlag) {
-		ctx.drawImage(imagemOut, x, y, w, h);
-	} else {
-		ctx.drawImage(imagem, x, y, w, h);
-	}
 }
 
 requestAnimationFrame(animate);
