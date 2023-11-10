@@ -24,6 +24,7 @@ window.addEventListener("mousemove", (event) => {
 window.addEventListener("resize", () => {
 	innerWidth = Math.floor(window.innerWidth - 0.1);
 	innerHeight = Math.floor(window.innerHeight - 0.1);
+	console.log('resize ok', innerWidth + 'w', innerHeight + 'h');
 	resizeCanvas(canvas);
 });
 
@@ -41,11 +42,11 @@ let innerHeight = Math.floor(window.innerHeight - 0.1);
 function resizeCanvas(canvas) {
 	canvas.width = innerWidth;
 	canvas.height = innerHeight;
-	if(matchMedia("(max-width: 600px").matches) {
+	if(innerWidth <= 600) {
 		tam = 0.275 * canvas.width;
 		arcRadius = 0.4 * canvas.width;
 	}
-	else if(matchMedia("(max-width: 1024px").matches) {
+	else if(innerWidth <= 1024) {
 		tam = 0.2 * canvas.width;
 		arcRadius = 0.3 * canvas.width;
 	}
