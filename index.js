@@ -15,7 +15,7 @@ let mouseX = null;
 let mouseY = null;
 let mouseOutFlag = true;
 
-window.addEventListener("mousemove", (event) => {
+window.addEventListener("pointermove", (event) => {
 	mouseOutFlag = false;
 	mouseX = event.x;
 	mouseY = event.y;
