@@ -8,10 +8,11 @@
 
 body {
     background-color: grey;
+    overflow: hidden;
 }
 
 #myCanvas {
     display: block;
-    background-color: white;
+    background-color: black;
     touch-action: none;
 }

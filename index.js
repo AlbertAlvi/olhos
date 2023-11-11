@@ -7,14 +7,20 @@ const olhoIn = new Image();
 olhoIn.src = "olhoIn.png";
 const olhoOut = new Image();
 olhoOut.src = "olhoOut.png";
+const boca = new Image();
+boca.src = "boca.png";
 
 let olhoEscolhido = olhoOut;
 
 let tam = 0;
 let arcRadius = 0;
+let tremblingRange = 1;
 
 let pointerX = null;
 let pointerY = null;
+
+let innerWidth = window.innerWidth;
+let innerHeight = window.innerHeight;
 
 canvas.addEventListener("pointermove", (event) => {
 	movePointerXY(event);
@@ -36,18 +42,15 @@ canvas.addEventListener("pointerleave", () => {
 });
 
 window.addEventListener("resize", () => {
-	innerWidth = Math.floor(window.innerWidth - 0.1);
-	innerHeight = Math.floor(window.innerHeight - 0.1);
-	console.log("resize ok", innerWidth + "w", innerHeight + "h");
+	innerWidth = window.innerWidth;
+ 	innerHeight = window.innerHeight;
+	// console.log("resize ok", innerWidth + "w", innerHeight + "h");
 	resizeCanvas(canvas);
 });
 
 window.onload = () => {
 	resizeCanvas(canvas);
 };
-
-let innerWidth = Math.floor(window.innerWidth - 0.1);
-let innerHeight = Math.floor(window.innerHeight - 0.1);
 
 function resizeCanvas(canvas) {
 	canvas.width = innerWidth;
@@ -73,15 +76,17 @@ function animate() {
 	temp_x = canvas.width / 2;
 	temp_y = canvas.height / 2;
 	ctx.translate(temp_x, temp_y);
+	ctx.beginPath();
 	ctx.arc(0, 0, arcRadius, 0, Math.PI * 2, false); // novo arco na origem (0, 0) após a translação
-	ctx.stroke();
+	ctx.fillStyle = "lightgrey";
+	ctx.fill();
 
 	ctx.restore();
 	ctx.save();
 
 	/* olho 1 */
-	temp_x = canvas.width / 2 - tam / 2;
-	temp_y = canvas.height / 2 - 50;
+	temp_x = canvas.width / 2 - tam / 1.5 + parseInt((Math.random() - 0.5) * tremblingRange);
+	temp_y = canvas.height / 2 - 50 + parseInt((Math.random() - 0.5) * tremblingRange);
 
 	ctx.translate(temp_x, temp_y); // move a origem do canvas para o centro dele
 	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY)); // rotaciona o canvas
@@ -91,8 +96,8 @@ function animate() {
 	ctx.save(); // extremamente importante
 
 	/* olho 2 */
-	temp_x = canvas.width / 2 + tam / 2;
-	temp_y = canvas.height / 2 - 50;
+	temp_x = canvas.width / 2 + tam / 1.5 + parseInt((Math.random() - 0.5) * tremblingRange);
+	temp_y = canvas.height / 2 - 50 + parseInt((Math.random() - 0.5) * tremblingRange);
 
 	ctx.translate(temp_x, temp_y);
 	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY));
@@ -100,8 +105,11 @@ function animate() {
 
 	ctx.restore();
 
+	tremblingRange += 0.01;
 	requestAnimationFrame(animate);
 }
+
+
 
 function normalizeAngle(x1, y1, x2, y2) {
 	const dx = x2 - x1;
