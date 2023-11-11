@@ -105,7 +105,7 @@ function animate() {
 
 	ctx.restore();
 
-	tremblingRange += 0.01;
+	tremblingRange += 0.06;
 	requestAnimationFrame(animate);
 }
 
