@@ -15,7 +15,8 @@ let arcRadius = 0;
 let tremblingRange = 1;
 let collapseFlag = false;
 let collapseArcRadius = 0;
-let collapseTimeOut = null;
+let collapseEffectTimeOut = null;
+let collapseDurationTimeOut = null;
 let collapseX = null;
 let collapseY = null;
 
@@ -33,17 +34,21 @@ canvas.addEventListener("pointermove", (event) => {
 canvas.addEventListener("pointerdown", (event) => {
 	movePointerXY(event);
 	olhoEscolhido = olhoIn;
-	tremblingRange = 0;
-
+	
 	collapseFlag = true;
 	collapseX = pointerX;
 	collapseY = pointerY;
+	collapseArcRadius = 0;
 
-	clearTimeout(collapseTimeOut);
-	collapseTimeOut = setTimeout(()=>{
+	clearTimeout(collapseDurationTimeOut);
+	collapseDurationTimeOut = setTimeout(()=>{
 		collapseFlag = false;
-		collapseArcRadius = 0;
 	}, 3000);
+
+	clearTimeout(collapseEffectTimeOut);
+	collapseEffectTimeOut = setTimeout(() => {
+		tremblingRange = 0;
+	}, 200);
 });
 
 function movePointerXY(event) {
