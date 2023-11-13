@@ -1,1 +1,1 @@
-### Simulação simplória do colapso de uma partícula em superposição
+### Simplistic simulation of the collapse of a particle in superposition
