@@ -7,14 +7,17 @@ const olhoIn = new Image();
 olhoIn.src = "olhoIn.png";
 const olhoOut = new Image();
 olhoOut.src = "olhoOut.png";
-const boca = new Image();
-boca.src = "boca.png";
 
 let olhoEscolhido = olhoOut;
 
 let tam = 0;
 let arcRadius = 0;
 let tremblingRange = 1;
+let collapseFlag = false;
+let collapseArcRadius = 0;
+let collapseTimeOut = null;
+let collapseX = null;
+let collapseY = null;
 
 let pointerX = null;
 let pointerY = null;
@@ -30,6 +33,17 @@ canvas.addEventListener("pointermove", (event) => {
 canvas.addEventListener("pointerdown", (event) => {
 	movePointerXY(event);
 	olhoEscolhido = olhoIn;
+	tremblingRange = 0;
+
+	collapseFlag = true;
+	collapseX = pointerX;
+	collapseY = pointerY;
+
+	clearTimeout(collapseTimeOut);
+	collapseTimeOut = setTimeout(()=>{
+		collapseFlag = false;
+		collapseArcRadius = 0;
+	}, 3000);
 });
 
 function movePointerXY(event) {
@@ -43,7 +57,7 @@ canvas.addEventListener("pointerleave", () => {
 
 window.addEventListener("resize", () => {
 	innerWidth = window.innerWidth;
- 	innerHeight = window.innerHeight;
+	innerHeight = window.innerHeight;
 	// console.log("resize ok", innerWidth + "w", innerHeight + "h");
 	resizeCanvas(canvas);
 });
@@ -85,8 +99,12 @@ function animate() {
 	ctx.save();
 
 	/* olho 1 */
-	temp_x = canvas.width / 2 - tam / 1.5 + parseInt((Math.random() - 0.5) * tremblingRange);
-	temp_y = canvas.height / 2 - 50 + parseInt((Math.random() - 0.5) * tremblingRange);
+	temp_x =
+		canvas.width / 2 -
+		tam / 1.5 +
+		parseInt((Math.random() - 0.5) * tremblingRange);
+	temp_y =
+		canvas.height / 2 - 50 + parseInt((Math.random() - 0.5) * tremblingRange);
 
 	ctx.translate(temp_x, temp_y); // move a origem do canvas para o centro dele
 	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY)); // rotaciona o canvas
@@ -96,20 +114,43 @@ function animate() {
 	ctx.save(); // extremamente importante
 
 	/* olho 2 */
-	temp_x = canvas.width / 2 + tam / 1.5 + parseInt((Math.random() - 0.5) * tremblingRange);
-	temp_y = canvas.height / 2 - 50 + parseInt((Math.random() - 0.5) * tremblingRange);
+	temp_x =
+		canvas.width / 2 +
+		tam / 1.5 +
+		parseInt((Math.random() - 0.5) * tremblingRange);
+	temp_y =
+		canvas.height / 2 - 50 + parseInt((Math.random() - 0.5) * tremblingRange);
 
 	ctx.translate(temp_x, temp_y);
 	ctx.rotate(normalizeAngle(temp_x, temp_y, pointerX, pointerY));
 	ctx.drawImage(olhoEscolhido, -tam / 2, -tam / 2, tam, tam);
 
 	ctx.restore();
+	if(collapseFlag) {
+		ctx.save();
+	
+		ctx.translate(collapseX, collapseY);
+		ctx.beginPath();
+		ctx.arc(0, 0, collapseArcRadius, 0, Math.PI * 2, false); // novo arco na origem (0, 0) após a translação
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = "white";
+		ctx.stroke();
+		collapseArcRadius += 50;
 
-	tremblingRange += 0.06;
+		ctx.restore();
+		ctx.save();
+		
+		ctx.font = "30px Arial";
+		ctx.fillStyle = "white";
+		ctx.fillText("Collapse!", collapseX, collapseY);
+		
+		ctx.restore();
+	} 
+	else if(tremblingRange < arcRadius)
+		tremblingRange += 2;
+
 	requestAnimationFrame(animate);
 }
-
-
 
 function normalizeAngle(x1, y1, x2, y2) {
 	const dx = x2 - x1;
