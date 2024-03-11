@@ -1,1 +1,1 @@
-## Satirical representation of the collapse of a particle in superposition using Canvas
+### Satirical representation of the collapse of a particle in superposition using Canvas
